@@ -2,89 +2,125 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Convite Especial</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body, html {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            overflow: hidden;
+            position: fixed;
+        }
+        
+        .app-container {
+            height: 100%;
+            width: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            background-color: #f0f8ff;
-            margin: 0;
-            overflow: hidden;
+            padding: 20px;
         }
         
-        .container {
-            text-align: center;
+        .card {
             background-color: white;
             padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
             position: relative;
-            z-index: 1;
-            width: 80%;
-            max-width: 500px;
+            z-index: 5;
         }
         
         h1 {
             color: #ff6b6b;
             margin-bottom: 30px;
-            font-size: 28px;
+            font-size: 24px;
         }
         
-        .button-container {
+        .button-area {
             display: flex;
             justify-content: center;
-            gap: 30px;
+            gap: 20px;
             margin-top: 30px;
+            margin-bottom: 20px;
             min-height: 60px;
             position: relative;
         }
         
-        button {
-            padding: 15px 30px;
-            font-size: 18px;
+        .btn {
+            padding: 12px 25px;
+            font-size: 16px;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: transform 0.3s, background-color 0.3s;
+            outline: none;
+            transition: transform 0.2s, background-color 0.2s;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
         
-        #btnSim {
+        .btn-sim {
             background-color: #4caf50;
             color: white;
         }
         
-        #btnSim:hover {
+        .btn-sim:hover, .btn-sim:active {
             background-color: #3e8e41;
             transform: scale(1.05);
         }
         
-        #btnNao {
+        .btn-nao {
             background-color: #ff6b6b;
             color: white;
-            position: relative; /* Inicialmente posicionado normalmente no fluxo */
         }
         
-        #btnNao.esquivo {
-            position: fixed; /* Mudamos para fixed para garantir visibilidade na tela */
-            z-index: 100;
-            transition: all 0.3s ease; /* Animação suave para transição */
-        }
-        
-        #btnNao:hover {
+        .btn-nao:hover, .btn-nao:active {
             background-color: #ff5252;
         }
         
+        /* Botão não quando está em modo "fujão" */
+        .botao-fujao {
+            position: fixed !important;
+            z-index: 1000;
+        }
+        
+        .message {
+            color: #4caf50;
+            font-size: 20px;
+            margin-top: 20px;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        
+        .show {
+            opacity: 1;
+        }
+        
         .confetti {
-            position: absolute;
+            position: fixed;
             width: 10px;
             height: 10px;
-            background-color: #f00;
             border-radius: 50%;
-            animation: fall 3s linear forwards;
+            z-index: 4;
+            opacity: 0.8;
+        }
+        
+        .heart {
+            position: fixed;
+            font-size: 24px;
+            z-index: 4;
         }
         
         @keyframes fall {
@@ -94,201 +130,182 @@
             }
         }
         
-        .message {
-            font-size: 24px;
-            color: #4caf50;
-            margin-top: 20px;
-            opacity: 0;
-            transition: opacity 1s;
-        }
-        
-        .show {
-            opacity: 1;
-        }
-        
-        .heart {
-            font-size: 24px;
-            position: absolute;
-            animation: float 3s ease-in-out infinite;
-        }
-        
         @keyframes float {
-            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
-        }
-        
-        /* Responsividade para dispositivos móveis */
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 24px;
-            }
-            
-            button {
-                padding: 12px 25px;
-                font-size: 16px;
-            }
-            
-            .button-container {
-                gap: 15px;
-            }
-            
-            .message {
-                font-size: 20px;
-            }
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-100px); opacity: 0; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Quer almoçar comigo?</h1>
-        <div class="button-container">
-            <button id="btnSim">Sim</button>
-            <button id="btnNao">Não</button>
+    <div class="app-container">
+        <div class="card">
+            <h1>Quer almoçar comigo?</h1>
+            <div class="button-area">
+                <button id="btnSim" class="btn btn-sim">Sim</button>
+                <button id="btnNao" class="btn btn-nao">Não</button>
+            </div>
+            <div id="message" class="message">Ótimo! Vamos ter um almoço incrível!</div>
         </div>
-        <div id="message" class="message">Ótimo! Vamos ter um almoço incrível!</div>
     </div>
 
     <script>
-        const btnNao = document.getElementById("btnNao");
-        const btnSim = document.getElementById("btnSim");
-        const message = document.getElementById("message");
-        const container = document.querySelector(".container");
-        
-        let botaoClicado = false;
-        
-        // Função para posicionar o botão "Não" em um local aleatório, mas sempre visível
-        function posicionarBotaoNao() {
-            // Obter dimensões do botão
-            const botaoWidth = btnNao.offsetWidth;
-            const botaoHeight = btnNao.offsetHeight;
+        document.addEventListener('DOMContentLoaded', function() {
+            const btnSim = document.getElementById('btnSim');
+            const btnNao = document.getElementById('btnNao');
+            const message = document.getElementById('message');
             
-            // Garantir que o botão fique dentro dos limites da tela
-            const maxX = window.innerWidth - botaoWidth - 10; // 10px de margem
-            const maxY = window.innerHeight - botaoHeight - 10; // 10px de margem
+            let primeiroClique = true;
             
-            // Gerar posição aleatória dentro dos limites visíveis
-            const x = Math.max(10, Math.random() * maxX);
-            const y = Math.max(10, Math.random() * maxY);
-            
-            // Aplicar a nova posição
-            btnNao.style.left = x + "px";
-            btnNao.style.top = y + "px";
-        }
-        
-        // Move o botão quando clica em "Não"
-        btnNao.addEventListener("click", function(e) {
-            e.preventDefault(); // Evita comportamento padrão
-            
-            // Na primeira vez que o botão é clicado, adiciona a classe para posicionamento fixo
-            if (!botaoClicado) {
-                botaoClicado = true;
-                btnNao.classList.add('esquivo');
+            // Função para obter posição aleatória, mas sempre visível na tela
+            function getPosicaoSegura() {
+                const botaoWidth = btnNao.offsetWidth;
+                const botaoHeight = btnNao.offsetHeight;
+                
+                // Garantir que o botão fique dentro dos limites da tela
+                // com uma margem de segurança
+                const margemSeguranca = 20;
+                const maxX = window.innerWidth - botaoWidth - margemSeguranca;
+                const maxY = window.innerHeight - botaoHeight - margemSeguranca;
+                
+                const x = Math.max(margemSeguranca, Math.floor(Math.random() * maxX));
+                const y = Math.max(margemSeguranca, Math.floor(Math.random() * maxY));
+                
+                return { x, y };
             }
             
-            posicionarBotaoNao(); // Reposiciona o botão
-        });
-        
-        // Para dispositivos touch, previne que o toque no botão "Não" cause scroll
-        btnNao.addEventListener("touchstart", function(e) {
-            e.preventDefault();
-        });
-        
-        // Animação quando clica em "Sim"
-        btnSim.addEventListener("click", function() {
-            // Mostrar mensagem
-            message.classList.add("show");
+            // Manipulador para o botão "Não"
+            btnNao.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Na primeira vez, converte o botão para posição fixa
+                if (primeiroClique) {
+                    primeiroClique = false;
+                    btnNao.classList.add('botao-fujao');
+                }
+                
+                // Obtém nova posição e aplica
+                const novaPosicao = getPosicaoSegura();
+                btnNao.style.left = novaPosicao.x + 'px';
+                btnNao.style.top = novaPosicao.y + 'px';
+                
+                // Impede comportamento padrão em dispositivos touch
+                return false;
+            });
             
-            // Criar confetes
-            for (let i = 0; i < 50; i++) { // Reduzimos para melhor performance em mobile
-                createConfetti();
-            }
+            // Também trata touchstart para dispositivos móveis
+            btnNao.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Na primeira vez, converte o botão para posição fixa
+                if (primeiroClique) {
+                    primeiroClique = false;
+                    btnNao.classList.add('botao-fujao');
+                }
+                
+                // Obtém nova posição e aplica
+                const novaPosicao = getPosicaoSegura();
+                btnNao.style.left = novaPosicao.x + 'px';
+                btnNao.style.top = novaPosicao.y + 'px';
+                
+                return false;
+            });
             
-            // Criar corações
-            for (let i = 0; i < 10; i++) { // Reduzimos para melhor performance em mobile
+            // Manipulador para o botão "Sim"
+            btnSim.addEventListener('click', function() {
+                // Mostrar mensagem
+                message.classList.add('show');
+                
+                // Criar confetes
+                criarFestinha();
+                
+                // Esconder o botão "Não"
+                btnNao.style.display = 'none';
+                
+                // Animar o botão "Sim"
+                btnSim.style.transform = 'scale(1.2)';
                 setTimeout(() => {
-                    createHeart();
-                }, i * 150);
+                    btnSim.style.transform = 'scale(1)';
+                }, 300);
+            });
+            
+            // Função para criar elementos de animação (confetes e corações)
+            function criarFestinha() {
+                // Criar confetes
+                const numElementos = (window.innerWidth < 600) ? 30 : 50;
+                
+                for (let i = 0; i < numElementos; i++) {
+                    // Cria confete
+                    setTimeout(() => {
+                        const confetti = document.createElement('div');
+                        confetti.className = 'confetti';
+                        
+                        // Posição inicial aleatória na parte superior
+                        const startX = Math.random() * window.innerWidth;
+                        confetti.style.left = startX + 'px';
+                        confetti.style.top = '-10px';
+                        
+                        // Cor aleatória
+                        const colors = ['#ff6b6b', '#4caf50', '#3498db', '#f1c40f', '#9b59b6', '#e67e22'];
+                        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                        confetti.style.backgroundColor = randomColor;
+                        
+                        // Tamanho aleatório
+                        const size = Math.random() * 8 + 5;
+                        confetti.style.width = size + 'px';
+                        confetti.style.height = size + 'px';
+                        
+                        // Animação
+                        const duration = Math.random() * 2 + 1;
+                        confetti.style.animation = `fall ${duration}s linear forwards`;
+                        
+                        document.body.appendChild(confetti);
+                        
+                        // Limpar após animação
+                        setTimeout(() => {
+                            confetti.remove();
+                        }, duration * 1000);
+                    }, i * 50);
+                    
+                    // Cria coração (menos corações que confetes)
+                    if (i % 3 === 0) {
+                        setTimeout(() => {
+                            const heart = document.createElement('div');
+                            heart.className = 'heart';
+                            heart.innerHTML = '❤️';
+                            
+                            // Posição inicial
+                            const startX = Math.random() * window.innerWidth;
+                            heart.style.left = startX + 'px';
+                            heart.style.bottom = '20px';
+                            
+                            // Tamanho
+                            const size = Math.random() * 15 + 15;
+                            heart.style.fontSize = size + 'px';
+                            
+                            // Animação
+                            const duration = Math.random() * 2 + 1;
+                            heart.style.animation = `float ${duration}s ease-in-out forwards`;
+                            
+                            document.body.appendChild(heart);
+                            
+                            // Limpar após animação
+                            setTimeout(() => {
+                                heart.remove();
+                            }, duration * 1000);
+                        }, i * 150);
+                    }
+                }
             }
             
-            // Esconder o botão "Não"
-            btnNao.style.display = "none";
-            
-            // Animar o botão "Sim"
-            btnSim.style.transform = "scale(1.2)";
-            setTimeout(() => {
-                btnSim.style.transform = "scale(1)";
-            }, 300);
+            // Prevenir comportamentos indesejados em dispositivos móveis
+            document.addEventListener('touchmove', function(e) {
+                if (e.target === btnNao) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
         });
-        
-        // Função para criar confete
-        function createConfetti() {
-            const confetti = document.createElement("div");
-            confetti.className = "confetti";
-            
-            // Posição inicial
-            const startX = Math.random() * window.innerWidth;
-            confetti.style.left = startX + "px";
-            confetti.style.top = "-10px";
-            
-            // Cor aleatória
-            const colors = ["#ff6b6b", "#4caf50", "#3498db", "#f1c40f", "#9b59b6", "#e67e22"];
-            const randomColor = colors[Math.floor(Math.random() * colors.length)];
-            confetti.style.backgroundColor = randomColor;
-            
-            // Tamanho aleatório
-            const size = Math.random() * 10 + 5;
-            confetti.style.width = size + "px";
-            confetti.style.height = size + "px";
-            
-            // Velocidade e tempo aleatórios
-            const duration = Math.random() * 3 + 2;
-            confetti.style.animation = `fall ${duration}s linear forwards`;
-            
-            document.body.appendChild(confetti);
-            
-            // Remover após a animação
-            setTimeout(() => {
-                confetti.remove();
-            }, duration * 1000);
-        }
-        
-        // Função para criar coração
-        function createHeart() {
-            const heart = document.createElement("div");
-            heart.className = "heart";
-            heart.innerHTML = "❤️";
-            
-            // Posição inicial aleatória em baixo da tela
-            const startX = Math.random() * window.innerWidth;
-            heart.style.left = startX + "px";
-            heart.style.top = (window.innerHeight - 50) + "px";
-            
-            // Tamanho aleatório
-            const size = Math.random() * 20 + 15;
-            heart.style.fontSize = size + "px";
-            
-            // Velocidade aleatória
-            const duration = Math.random() * 2 + 2;
-            heart.style.animation = `float ${duration}s ease-in-out forwards`;
-            
-            document.body.appendChild(heart);
-            
-            // Remover após a animação
-            setTimeout(() => {
-                heart.remove();
-            }, duration * 1000);
-        }
-        
-        // Ajustar layout para dispositivos móveis
-        function ajustarParaMobile() {
-            if (window.innerWidth <= 480) {
-                // Ajustes específicos para mobile se necessário
-            }
-        }
-        
-        // Chamar ajustes ao carregar e redimensionar
-        window.addEventListener('load', ajustarParaMobile);
-        window.addEventListener('resize', ajustarParaMobile);
     </script>
 </body>
 </html>
