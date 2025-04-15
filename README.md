@@ -19,17 +19,19 @@
         .container {
             text-align: center;
             background-color: white;
-            padding: 40px;
+            padding: 20px;
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             position: relative;
             z-index: 1;
+            width: 80%;
+            max-width: 500px;
         }
         
         h1 {
             color: #ff6b6b;
             margin-bottom: 30px;
-            font-size: 32px;
+            font-size: 28px;
         }
         
         .button-container {
@@ -42,7 +44,7 @@
         }
         
         button {
-            padding: 15px 40px;
+            padding: 15px 30px;
             font-size: 18px;
             border: none;
             border-radius: 10px;
@@ -67,8 +69,9 @@
         }
         
         #btnNao.esquivo {
-            position: absolute; /* Quando está em modo esquivo, torna-se posicionamento absoluto */
+            position: fixed; /* Mudamos para fixed para garantir visibilidade na tela */
             z-index: 100;
+            transition: all 0.3s ease; /* Animação suave para transição */
         }
         
         #btnNao:hover {
@@ -113,6 +116,26 @@
             0% { transform: translateY(0) rotate(0deg); opacity: 1; }
             100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
         }
+        
+        /* Responsividade para dispositivos móveis */
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 24px;
+            }
+            
+            button {
+                padding: 12px 25px;
+                font-size: 16px;
+            }
+            
+            .button-container {
+                gap: 15px;
+            }
+            
+            .message {
+                font-size: 20px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -130,22 +153,24 @@
         const btnSim = document.getElementById("btnSim");
         const message = document.getElementById("message");
         const container = document.querySelector(".container");
-        const buttonContainer = document.querySelector(".button-container");
         
         let botaoClicado = false;
         
-        // Função para posicionar o botão "Não" em um local aleatório
+        // Função para posicionar o botão "Não" em um local aleatório, mas sempre visível
         function posicionarBotaoNao() {
-            const containerRect = container.getBoundingClientRect();
-            // Determinar área segura dentro do container
-            const margemSeguranca = 20;
-            const maxX = containerRect.width - btnNao.offsetWidth - margemSeguranca;
-            const maxY = containerRect.height - btnNao.offsetHeight - margemSeguranca;
+            // Obter dimensões do botão
+            const botaoWidth = btnNao.offsetWidth;
+            const botaoHeight = btnNao.offsetHeight;
             
-            // Posição aleatória dentro da área do container
-            const x = Math.random() * maxX + margemSeguranca;
-            const y = Math.random() * maxY + margemSeguranca;
+            // Garantir que o botão fique dentro dos limites da tela
+            const maxX = window.innerWidth - botaoWidth - 10; // 10px de margem
+            const maxY = window.innerHeight - botaoHeight - 10; // 10px de margem
             
+            // Gerar posição aleatória dentro dos limites visíveis
+            const x = Math.max(10, Math.random() * maxX);
+            const y = Math.max(10, Math.random() * maxY);
+            
+            // Aplicar a nova posição
             btnNao.style.left = x + "px";
             btnNao.style.top = y + "px";
         }
@@ -154,7 +179,7 @@
         btnNao.addEventListener("click", function(e) {
             e.preventDefault(); // Evita comportamento padrão
             
-            // Na primeira vez que o botão é clicado, adiciona a classe para posicionamento absoluto
+            // Na primeira vez que o botão é clicado, adiciona a classe para posicionamento fixo
             if (!botaoClicado) {
                 botaoClicado = true;
                 btnNao.classList.add('esquivo');
@@ -163,18 +188,23 @@
             posicionarBotaoNao(); // Reposiciona o botão
         });
         
+        // Para dispositivos touch, previne que o toque no botão "Não" cause scroll
+        btnNao.addEventListener("touchstart", function(e) {
+            e.preventDefault();
+        });
+        
         // Animação quando clica em "Sim"
         btnSim.addEventListener("click", function() {
             // Mostrar mensagem
             message.classList.add("show");
             
             // Criar confetes
-            for (let i = 0; i < 100; i++) {
+            for (let i = 0; i < 50; i++) { // Reduzimos para melhor performance em mobile
                 createConfetti();
             }
             
             // Criar corações
-            for (let i = 0; i < 20; i++) {
+            for (let i = 0; i < 10; i++) { // Reduzimos para melhor performance em mobile
                 setTimeout(() => {
                     createHeart();
                 }, i * 150);
@@ -248,6 +278,17 @@
                 heart.remove();
             }, duration * 1000);
         }
+        
+        // Ajustar layout para dispositivos móveis
+        function ajustarParaMobile() {
+            if (window.innerWidth <= 480) {
+                // Ajustes específicos para mobile se necessário
+            }
+        }
+        
+        // Chamar ajustes ao carregar e redimensionar
+        window.addEventListener('load', ajustarParaMobile);
+        window.addEventListener('resize', ajustarParaMobile);
     </script>
 </body>
 </html>
